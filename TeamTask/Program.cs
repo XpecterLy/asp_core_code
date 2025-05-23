@@ -103,6 +103,17 @@ builder.Services.AddDbContext<DbTeamTaskContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("db_team_task"));
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactDevClient", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -116,6 +127,8 @@ if (app.Environment.IsDevelopment())
 ExceptionMiddleware.ConfigureExceptionHandler(app);
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowReactDevClient");
 
 app.UseAuthentication();
 app.UseAuthorization();
